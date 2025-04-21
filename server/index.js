@@ -1,0 +1,17 @@
+const express = require("express");
+const morgan = require("morgan");
+require("dotenv").config();
+const cors = require("cors");
+const app = express();
+const http = require("http");
+const { Server } = require("socket.io");
+const server = http.createServer(app);
+const port = process.env.PORT || 5000;
+app.use(cors());
+app.use(morgan("dev"));
+app.use(express.json());
+const createConnection = require("./dbConnection");
+const userRouter = require("./Routes/userRoute");
+createConnection();
+app.use("/user", userRouter);
+server.listen(port, () => console.log("server is running at port " + port));
