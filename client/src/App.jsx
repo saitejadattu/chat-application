@@ -1,11 +1,11 @@
 import React from "react";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import { BrowserRouter as Routers, Router, Route } from "react-router-dom";
+import { BrowserRouter as Routers, Route,Routes } from "react-router-dom";
 const App = () => {
   return (
     <Routers>
-      <Router>
+      <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route
@@ -16,7 +16,7 @@ const App = () => {
             </div>
           }
         />
-      </Router>
+      </Routes>
     </Routers>
   );
 };
