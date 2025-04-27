@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 export default function Register() {
   const [isSignup, setIsSignup] = useState(false);
   const [formData, setFormData] = useState({
@@ -7,7 +6,6 @@ export default function Register() {
     email: "",
     password: "",
   });
-
   const toggleMode = () => {
     setIsSignup((prev) => !prev);
     setFormData({ name: "", email: "", password: "" });

@@ -1,19 +1,42 @@
 import { useState } from "react";
-
+import LoadingUi from "../Ui's/LoadingUi.jsx";
+import { useNavigate } from "react-router-dom";
+import Cookie from "js-cookie";
 export default function Login() {
   const [userDetails, setUserDetails] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
+  const navigate = useNavigate();
   const handleInput = (e) => {
     const { value, name } = e.target;
     setUserDetails((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(userDetails);
-  };
+    setLoading(true);
+    const payload = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userDetails),
+    };
+    const response = await fetch("http://localhost:5000/user/login", payload);
+    const parsedResponse = await response.json();
+    if (response.ok) {
+      Cookie.set("jwtToken", parsedResponse.message);
+      navigate("/");
+    } else {
+      setLoading(false);
+      setErr(parsedResponse.message);
+      console.log("response");
+    }
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    // console.log(userDetails);
+  };
+  const content = () => {
+    return (
       <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-8 space-y-6">
         <h2 className="text-2xl font-bold text-center text-gray-800">Login</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -55,10 +78,11 @@ export default function Login() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"
+            className="w-full animate-scaleIn px-6 py-3 text-white font-bold rounded-lg bg-blue-600 shadow-lg"
           >
             Sign In
           </button>
+          {err && <p className="text-red-600">{err}</p>}
         </form>
 
         <p className="text-center text-sm text-gray-600">
@@ -68,6 +92,11 @@ export default function Login() {
           </a>
         </p>
       </div>
+    );
+  };
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      {loading ? <LoadingUi /> : content()}
     </div>
   );
 }

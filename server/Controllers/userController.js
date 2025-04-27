@@ -1,62 +1,61 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
-const catchError = (res, err) => {
-  res.status(500).json({ message: err.message });
-};
+const asyncHandler = require("express-async-handler");
+//created custom handler
+// const catchError = (res, err) => {
+//   res.status(500).json({ message: err.message });
+// };
+
+//this is a custom response handler
 const sendResponse = (res, status, message) => {
   res.status(status).json({ message });
 };
 const userQueries = {
-  registerUser: async (req, res) => {
-    try {
-      const { email, name, password } = req.body;
-      const isUser = await User.findOne({ email });
-      if (!isUser) {
-        const hashedPass = await bcrypt.hash(password, 10);
-        const registerUser = await User({ ...req.body, password: hashedPass });
-        const response = await registerUser.save();
-        if (response) sendResponse(res, 200, "registration successful");
-      } else {
-        sendResponse(res, 404, "email already in user");
-      }
-    } catch (err) {
-      catchError(res, err);
+  registerUser: asyncHandler(async (req, res) => {
+    const { email, name, password } = req.body;
+    const isUser = await User.findOne({ email });
+    console.log(isUser);
+    if (!isUser) {
+      const hashedPass = await bcrypt.hash(password, 10);
+      const registerUser = await User({ ...req.body, password: hashedPass });
+      const response = await registerUser.save();
+      if (response) sendResponse(res, 200, "registration successful");
+    } else {
+      throw new Error("User not found");
     }
-  },
-  loginUser: async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      const isUser = await User.findOne({ email });
-      if (isUser) {
-        const isPassword = await bcrypt.compare(password, isUser.password);
-        if (isPassword) {
-          const payload = { email: isUser.email, id: isUser._id };
-          const jwtToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-            expiresIn: 1,
-          });
-          sendResponse(res, 200, jwtToken);
-        } else {
-          sendResponse(res, 400, "incorrect password or email :)");
-        }
-      }
-    } catch (err) {
-      catchError(res, err);
+  }),
+  loginUser: asyncHandler(async (req, res) => {
+    console.log(req.body);
+    const { email, password } = req.body;
+    const isUser = await User.findOne({ email });
+    console.log(isUser);
+    if (!isUser) {
+      res.status(404);
+      throw new Error("incorrect password or email or not found:)");
     }
-  },
-  deleteUser: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const deleteUser = await User.findByIdAndDelete(id);
-      if (deleteUser) {
-        sendResponse(res, 200, "deleted successful");
-      } else {
-        sendResponse(res, 500, "user Not Found");
-      }
-    } catch (err) {
-      catchError(res, err);
+
+    const isPassword = await bcrypt.compare(password, isUser.password);
+    if (!isPassword) {
+      res.status(401);
+      throw new Error("incorrect password or email :)");
     }
-  },
+    const payload = { email: isUser.email, id: isUser._id };
+    const jwtToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+      expiresIn: 1,
+    });
+    sendResponse(res, 200, jwtToken);
+  }),
+  deleteUser: asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const deleteUser = await User.findByIdAndDelete(id);
+    if (deleteUser) {
+      sendResponse(res, 200, "deleted successful");
+    } else {
+      res.status(401);
+      throw new Error("Your not Authorized to do this action");
+    }
+  }),
   getUsers: async (req, res) => {
     const users = await User.find();
     res.send(users);

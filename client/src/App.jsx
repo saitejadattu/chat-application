@@ -1,13 +1,19 @@
 import React from "react";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import { BrowserRouter as Routers, Route,Routes } from "react-router-dom";
+import Home from "./components/Home.jsx";
+import Login from "./components/Login.jsx";
+import Register from "./components/Register.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import { BrowserRouter as Routers, Route, Routes } from "react-router-dom";
+
 const App = () => {
   return (
     <Routers>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Home />} />
+        </Route>
         <Route
           path="*"
           element={
