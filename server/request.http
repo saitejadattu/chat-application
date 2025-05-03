@@ -16,6 +16,7 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:5000/user/delete/6805d183f88a97ca99306307
+DELETE http://localhost:5000/user/delete/6805d20c17da3ea529ca22d8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlamFAZ21haWwuY29tIiwiaWQiOiI2ODA1YzdmODFlOGE3MzgyNWM0NGMzNGIiLCJpYXQiOjE3NDYyNjMzNTksImV4cCI6MTc0NjI2Njk1OX0.-n-dCcVSRXxnVJ1JwIMkby8hhK7bmYDubAXU3Qk2x8U
 ###
 GET http://localhost:5000/user/users

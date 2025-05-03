@@ -42,7 +42,7 @@ const userQueries = {
     }
     const payload = { email: isUser.email, id: isUser._id };
     const jwtToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-      expiresIn: 1,
+      expiresIn: "1h",
     });
     sendResponse(res, 200, jwtToken);
   }),
