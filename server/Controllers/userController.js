@@ -2,10 +2,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const asyncHandler = require("express-async-handler");
-//created custom handler
-// const catchError = (res, err) => {
-//   res.status(500).json({ message: err.message });
-// };
 
 //this is a custom response handler
 const sendResponse = (res, status, message) => {
@@ -15,21 +11,21 @@ const userQueries = {
   registerUser: asyncHandler(async (req, res) => {
     const { email, name, password } = req.body;
     const isUser = await User.findOne({ email });
-    console.log(isUser);
+    // console.log(isUser);
     if (!isUser) {
       const hashedPass = await bcrypt.hash(password, 10);
       const registerUser = await User({ ...req.body, password: hashedPass });
       const response = await registerUser.save();
       if (response) sendResponse(res, 200, "registration successful");
     } else {
-      throw new Error("User not found");
+      throw new Error("Email already in use");
     }
   }),
   loginUser: asyncHandler(async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     const { email, password } = req.body;
     const isUser = await User.findOne({ email });
-    console.log(isUser);
+    // console.log(isUser);
     if (!isUser) {
       res.status(404);
       throw new Error("incorrect password or email or not found:)");
@@ -41,9 +37,7 @@ const userQueries = {
       throw new Error("incorrect password or email :)");
     }
     const payload = { email: isUser.email, id: isUser._id };
-    const jwtToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-      expiresIn: "1h",
-    });
+    const jwtToken = jwt.sign(payload, process.env.JWT_SECRET_KEY);
     sendResponse(res, 200, jwtToken);
   }),
   deleteUser: asyncHandler(async (req, res) => {

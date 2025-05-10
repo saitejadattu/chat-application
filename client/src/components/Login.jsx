@@ -30,7 +30,7 @@ export default function Login() {
     } else {
       setLoading(false);
       setErr(parsedResponse.message);
-      console.log("response");
+      // console.log("response");
     }
 
     // console.log(userDetails);
@@ -87,9 +87,9 @@ export default function Login() {
 
         <p className="text-center text-sm text-gray-600">
           Don’t have an account?{" "}
-          <a href="#" className="text-blue-600 hover:underline">
+          <button onClick={()=>navigate("/register")} className="text-blue-600 hover:underline">
             Sign up
-          </a>
+          </button>
         </p>
       </div>
     );

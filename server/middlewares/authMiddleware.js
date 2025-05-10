@@ -7,6 +7,7 @@ const authentication = (req, res, next) => {
     }
     jwt.verify(jwtToken, process.env.JWT_SECRET_KEY,(err,payload)=>{
       if(err){
+        res.status(401);
         throw new Error("Invalid authentication")
       }
       res.payload = payload

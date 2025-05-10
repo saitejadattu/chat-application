@@ -1,14 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 export default function Register() {
-  const [isSignup, setIsSignup] = useState(false);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
   const toggleMode = () => {
-    setIsSignup((prev) => !prev);
-    setFormData({ name: "", email: "", password: "" });
+    navigate("/login");
   };
 
   const handleChange = (e) => {
@@ -18,38 +18,48 @@ export default function Register() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(isSignup ? "Signup" : "Login", formData);
+    const payload = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    };
+    const response = await fetch(
+      "http://localhost:5000/user/register",
+      payload
+    );
+    const parsedResponse = await response.json();
+    console.log(parsedResponse);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-8 space-y-6">
         <h2 className="text-2xl font-bold text-center text-gray-800">
-          {isSignup ? "Create an Account" : "Login"}
+          Create an Account
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {isSignup && (
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Name
-              </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          )}
+          <div>
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Name
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
           <div>
             <label
@@ -91,17 +101,17 @@ export default function Register() {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"
           >
-            {isSignup ? "Sign Up" : "Sign In"}
+            Sign Up
           </button>
         </form>
 
         <p className="text-center text-sm text-gray-600">
-          {isSignup ? "Already have an account?" : "Don't have an account?"}{" "}
+          Already have an account?
           <button
             onClick={toggleMode}
             className="text-blue-600 hover:underline font-medium"
           >
-            {isSignup ? "Login" : "Sign up"}
+            Login
           </button>
         </p>
       </div>

@@ -9,7 +9,7 @@ const NavBar = () => {
   };
 
   return (
-    <div className="p-3 flex justify-between items-center bg-blue-600 text-white">
+    <div className="p-3 flex justify-between h-16 items-center bg-green-400 text-white">
       <Link className="" to="/">
         Meet
       </Link>

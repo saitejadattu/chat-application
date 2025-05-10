@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const userSchema = mongoose.Schema({
   name: {
     type: String,
@@ -15,6 +14,12 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  messages: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
 });
 
 const User = new mongoose.model("User", userSchema);
