@@ -145,16 +145,42 @@ const Home = () => {
     setMessages(parseResponse);
     socket.emit("join_group", user._id);
   };
-  const handleEditAndDelete = () => {
+  const handleEditAndDelete = (e) => {
+    e.stopPropagation();
     setIsEditAndDelete(true);
     setMenuPosition({
-      x: window.innerWidth / 2 - 200,
-      y: window.innerHeight / 2 - 200,
+      x: e.clientX,
+      y: e.clientY,
     });
   };
-  //console.log(group);
-  //console.log(groupMessages);
-  // console.log(window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+  const handleDelete = async () => {
+    if (isGroup) {
+      const response = await fetch(`http://localhost:5000/group/${group._id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const parseResponse = await response.json();
+      console.log(parseResponse);
+    } else {
+      const response = await fetch(
+        `http://localhost:5000/user/delete/${receiver._id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const parseResponse = await response.json();
+      console.log(parseResponse);
+    }
+  };
+
   return (
     <div
       className={`h-screen w-full flex flex-col ${
@@ -166,11 +192,7 @@ const Home = () => {
         isGroupModel={isGroupModel}
         onClose={() => setIsGroupModel(false)}
       />
-      <EditAndDelete
-        isEditAndDelete={isEditAndDelete}
-        menuPosition={menuPosition}
-        
-      />
+
       <div className="flex flex-1 overflow-hidden">
         <div className="w-2/5 p-5 overflow-y-auto">
           <div className="flex justify-between items-center mb-4">
@@ -188,7 +210,14 @@ const Home = () => {
               />
             )}
           </div>
-
+          <div className="relative">
+            <EditAndDelete
+              isEditAndDelete={isEditAndDelete}
+              menuPosition={menuPosition}
+              onDelete={handleDelete}
+              onClose={() => setIsEditAndDelete(false)}
+            />
+          </div>
           {isGroup ? (
             <ul>
               {groups.length
@@ -263,7 +292,7 @@ const Home = () => {
             </ul>
           )}
         </div>
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col relative">
           {group && isGroup && (
             <div className="flex items-center p-5 border-b border-gray-700">
               <img
@@ -289,7 +318,7 @@ const Home = () => {
               </div>
             </div>
           )}
-          <ul className="flex-1 overflow-y-auto p-2 flex flex-col">
+          <ul className="flex-1 overflow-y-auto p-2 flex flex-col relative">
             {isGroup ? (
               groupMessages.length > 0 ? (
                 groupMessages.map((message, index) => (

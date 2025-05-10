@@ -1,28 +1,49 @@
-// components/PopupMenu.jsx
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
-const EditAndDelete = ({ isEditAndDelete, onEdit, onDelete, menuPosition }) => {
+const EditAndDelete = ({
+  isEditAndDelete,
+  onEdit,
+  onDelete,
+  onClose,
+  menuPosition,
+}) => {
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        onClose(); // Call onClose when clicked outside
+      }
+    };
+
+    if (isEditAndDelete) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isEditAndDelete, onClose]);
+
   if (!isEditAndDelete) return null;
-
+  //console.log("menuPosition", menuPosition);
   return (
     <div
-      className="absolute mt-2 w-28 bg-white rounded-lg shadow-lg border z-50"
-      style={{
-        top: menuPosition?.y ? `${menuPosition.y + 10}px` : "0px", // 10px below click
-        left: menuPosition?.x ? `${menuPosition.x}px` : "0px",
-      }}
+      ref={menuRef}
+      className="absolute w-24 bg-white border shadow-md rounded-md z-50"
+      style={{ top: `${menuPosition.y - 110}px`, left: `${menuPosition.x-110}px` }}
     >
       <button
+        className="block w-full px-4 py-2 text-sm text-blue-600 hover:bg-gray-100"
         onClick={onEdit}
-        className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
       >
-        Edit
+        ✏️ Edit
       </button>
       <button
+        className="block w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-100"
         onClick={onDelete}
-        className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100"
       >
-        Delete
+        🗑️ Delete
       </button>
     </div>
   );
