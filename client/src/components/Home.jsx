@@ -57,7 +57,6 @@ const Home = () => {
     });
     const parsedResponse = await response.json();
     socket.emit("send_group_message", parsedResponse.groupMessage);
-
     setMessage("");
   };
   const handleForm = async (e) => {
@@ -147,7 +146,7 @@ const Home = () => {
   };
   const handleEditAndDelete = (e) => {
     e.stopPropagation();
-    setIsEditAndDelete(true);
+    setIsEditAndDelete((prev) => !prev);
     setMenuPosition({
       x: e.clientX,
       y: e.clientY,

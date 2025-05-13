@@ -8,11 +8,11 @@ const EditAndDelete = ({
   menuPosition,
 }) => {
   const menuRef = useRef(null);
-
+  console.log(isEditAndDelete, "isEditAndDelete");
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
-        onClose(); // Call onClose when clicked outside
+        onClose();
       }
     };
 
@@ -31,17 +31,20 @@ const EditAndDelete = ({
     <div
       ref={menuRef}
       className="absolute w-24 bg-white border shadow-md rounded-md z-50"
-      style={{ top: `${menuPosition.y - 110}px`, left: `${menuPosition.x-110}px` }}
+      style={{
+        top: `${menuPosition.y - 110}px`,
+        left: `${menuPosition.x - 110}px`,
+      }}
     >
       <button
         className="block w-full px-4 py-2 text-sm text-blue-600 hover:bg-gray-100"
-        onClick={onEdit}
+        onClick={() => console.log("edit")}
       >
         ✏️ Edit
       </button>
       <button
         className="block w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-100"
-        onClick={onDelete}
+        onClick={() => console.log("delete")}
       >
         🗑️ Delete
       </button>
