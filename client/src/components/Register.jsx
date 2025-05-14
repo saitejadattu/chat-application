@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 export default function Register() {
   const navigate = useNavigate();
+  const [errMsg, setErrMsg] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -32,7 +33,14 @@ export default function Register() {
       payload
     );
     const parsedResponse = await response.json();
-    console.log(parsedResponse);
+    if (response.status === 201) {
+      navigate("/login");
+    } else {
+      setErrMsg(parsedResponse.message);
+      setTimeout(() => {
+        setErrMsg("");
+      }, 3000);
+    }
   };
 
   return (
@@ -103,6 +111,9 @@ export default function Register() {
           >
             Sign Up
           </button>
+          {errMsg && (
+            <p className="text-red-500 text-sm text-center mt-2">{errMsg}</p>
+          )}
         </form>
 
         <p className="text-center text-sm text-gray-600">
